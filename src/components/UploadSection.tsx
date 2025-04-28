@@ -2,27 +2,33 @@
 import React, { useState } from 'react';
 import FileUploader from './FileUploader';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/use-toast';
+import { toast } from 'sonner';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from '@/components/ui/label';
 
 interface UploadSectionProps {
-  onAnalyzeStart: (resumeFile: File, jobDescFile: File | null) => void;
+  onAnalyzeStart: (resumeFile: File, jobDescription: File | string | null) => void;
 }
 
 const UploadSection: React.FC<UploadSectionProps> = ({ onAnalyzeStart }) => {
   const [resumeFile, setResumeFile] = useState<File | null>(null);
   const [jobDescFile, setJobDescFile] = useState<File | null>(null);
+  const [jobDescText, setJobDescText] = useState<string>('');
+  const [jobDescType, setJobDescType] = useState<'file' | 'text'>('text');
 
   const handleAnalyzeClick = () => {
     if (!resumeFile) {
       toast({
         title: "Resume Required",
         description: "Please upload your resume to continue.",
-        variant: "destructive"
       });
       return;
     }
 
-    onAnalyzeStart(resumeFile, jobDescFile);
+    // Pass either the file or text based on the selected tab
+    const jobDescription = jobDescType === 'file' ? jobDescFile : jobDescText || null;
+    onAnalyzeStart(resumeFile, jobDescription);
   };
 
   return (
@@ -42,12 +48,31 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onAnalyzeStart }) => {
           onChange={setResumeFile}
         />
         
-        <FileUploader
-          label="Job Description (Optional)"
-          description="For more tailored feedback, upload the job description"
-          required={false}
-          onChange={setJobDescFile}
-        />
+        <div className="space-y-4">
+          <Label>Job Description (Optional)</Label>
+          <Tabs defaultValue="text" onValueChange={(value) => setJobDescType(value as 'file' | 'text')}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="text">Paste Text</TabsTrigger>
+              <TabsTrigger value="file">Upload File</TabsTrigger>
+            </TabsList>
+            <TabsContent value="text" className="space-y-2">
+              <Textarea
+                placeholder="Paste the job description here..."
+                className="min-h-[200px]"
+                value={jobDescText}
+                onChange={(e) => setJobDescText(e.target.value)}
+              />
+            </TabsContent>
+            <TabsContent value="file">
+              <FileUploader
+                label=""
+                description="Upload the job description file (PDF, Word, or Text)"
+                required={false}
+                onChange={setJobDescFile}
+              />
+            </TabsContent>
+          </Tabs>
+        </div>
         
         <div className="pt-4">
           <Button 
