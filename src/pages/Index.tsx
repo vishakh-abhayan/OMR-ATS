@@ -1,38 +1,75 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import Header from '@/components/Header';
 import UploadSection from '@/components/UploadSection';
 import AnalysisProgress from '@/components/AnalysisProgress';
 import ResultsDashboard from '@/components/ResultsDashboard';
 import { Toaster } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 const Index = () => {
   const [appState, setAppState] = useState<'upload' | 'analyzing' | 'results'>('upload');
-  const [score, setScore] = useState(0);
+  const [analysisData, setAnalysisData] = useState<any>(null);
+  const [analysisStatus, setAnalysisStatus] = useState<string>('');
 
-  const handleAnalyzeStart = (resumeFile: File, jobDesc: File | string | null) => {
+  const handleAnalyzeStart = async (resumeFile: File, jobDesc: File | string | null) => {
     setAppState('analyzing');
+    setAnalysisStatus('Preparing documents for analysis...');
     
-    // In a real app, we'd send these files to an API
-    console.log('Analyzing resume:', resumeFile.name);
-    if (jobDesc) {
-      if (typeof jobDesc === 'string') {
-        console.log('With job description text:', jobDesc.substring(0, 100) + '...');
-      } else {
-        console.log('With job description file:', jobDesc.name);
+    try {
+      // Create form data for the API request
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      
+      if (jobDesc) {
+        if (typeof jobDesc === 'string') {
+          formData.append('jobDescriptionText', jobDesc);
+        } else {
+          formData.append('jobDescription', jobDesc);
+        }
       }
-    }
-    
-    // Mock a random score between 60-90 for demo purposes
-    setScore(Math.floor(Math.random() * 31) + 60);
-  };
 
-  const handleAnalysisComplete = () => {
-    setAppState('results');
+      setAnalysisStatus('Uploading documents to server...');
+
+       const BASE_URL = import.meta.env.VITE_BACKEND_URL
+       console.log(BASE_URL)
+
+      // Make API request to backend
+      const response = await fetch(`${BASE_URL}/api/resume/analyze`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      setAnalysisStatus('Processing with AI...');
+      
+      const data = await response.json();
+      console.log('Analysis response:', data);
+      
+      // Store the analysis data
+      setAnalysisData(data);
+      
+      setAnalysisStatus('Analysis complete!');
+      
+      // Small delay to show completion status
+      setTimeout(() => {
+        setAppState('results');
+      }, 500);
+      
+    } catch (error) {
+      console.error('Analysis failed:', error);
+      toast.error('Failed to analyze resume. Please try again.');
+      setAppState('upload');
+    }
   };
 
   const resetApp = () => {
     setAppState('upload');
+    setAnalysisData(null);
+    setAnalysisStatus('');
   };
 
   return (
@@ -48,11 +85,18 @@ const Index = () => {
             )}
             
             {appState === 'analyzing' && (
-              <AnalysisProgress onComplete={handleAnalysisComplete} />
+              <AnalysisProgress 
+                status={analysisStatus}
+                onComplete={() => setAppState('results')} 
+              />
             )}
             
-            {appState === 'results' && (
-              <ResultsDashboard score={score} onReset={resetApp} />
+            {appState === 'results' && analysisData && (
+              <ResultsDashboard 
+                score={analysisData.overall_score || 0} 
+                analysisData={analysisData}
+                onReset={resetApp} 
+              />
             )}
           </div>
         </div>

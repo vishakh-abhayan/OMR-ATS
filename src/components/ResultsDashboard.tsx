@@ -1,4 +1,4 @@
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import ScoreCircle from './ScoreCircle';
 import ScoreBreakdown from './ScoreBreakdown';
@@ -9,54 +9,40 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface ResultsDashboardProps {
   score: number;
+  analysisData: any;
   onReset: () => void;
 }
 
-const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ score, onReset }) => {
-  // Mock data
+const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ score, analysisData, onReset }) => {
+  // Extract data from the backend response
   const scoreCategories = [
     {
       name: 'Content Analysis',
-      score: 75,
-      description: 'Evaluation of your resume content, including keywords, skills alignment, and overall narrative strength.'
+      score: analysisData?.score_breakdown?.content_analysis?.score || 0,
+      description: analysisData?.score_breakdown?.content_analysis?.description || 'Evaluation of your resume content'
     },
     {
       name: 'Visual/Formatting',
-      score: 85,
-      description: 'Assessment of your resume layout, font choices, spacing, and overall visual impression.'
+      score: analysisData?.score_breakdown?.formatting?.score || 0,
+      description: analysisData?.score_breakdown?.formatting?.description || 'Assessment of your resume layout'
     },
     {
       name: 'ATS Compatibility',
-      score: 62,
-      description: 'How well your resume can be parsed by Applicant Tracking Systems commonly used by employers.'
+      score: analysisData?.score_breakdown?.ats_compatibility?.score || 0,
+      description: analysisData?.score_breakdown?.ats_compatibility?.description || 'How well your resume can be parsed by ATS'
     }
   ];
 
-  const improvementItems = [
-    {
-      title: 'Low Keyword Match',
-      description: 'Your resume lacks several key terms found in similar job descriptions for your target role.',
-      status: 'poor',
-      actionItem: 'Incorporate industry-standard terms like "data analysis", "project management", and "stakeholder communication".'
-    },
-    {
-      title: 'Good Use of Action Verbs',
-      description: 'Your resume effectively uses strong action verbs to describe your achievements.',
-      status: 'good'
-    },
-    {
-      title: 'Missing Quantifiable Results',
-      description: 'Your experience descriptions would be stronger with specific metrics and outcomes.',
-      status: 'warning',
-      actionItem: 'Add numbers to demonstrate impact, e.g., "Increased sales by 20%" or "Reduced costs by $50K".'
-    },
-    {
-      title: 'Complex Formatting Detected',
-      description: 'Some elements in your resume may cause parsing issues with ATS systems.',
-      status: 'poor',
-      actionItem: 'Remove tables, headers/footers, and complex formatting elements. Use standard headings and bullet points.'
-    }
-  ];
+  // Add job match score if available
+  if (analysisData?.score_breakdown?.job_match) {
+    scoreCategories.push({
+      name: 'Job Match',
+      score: analysisData.score_breakdown.job_match.score || 0,
+      description: analysisData.score_breakdown.job_match.description || 'How well you match the job requirements'
+    });
+  }
+
+  const improvementItems = analysisData?.improvements || [];
 
   return (
     <div className="max-w-4xl mx-auto w-full">
@@ -64,13 +50,13 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ score, onReset }) =
         <div className="flex flex-col items-center text-center space-y-4 md:space-y-6">
           <ScoreCircle score={score} size="lg" label="Overall Resume Score" />
           
+          {analysisData?.executive_summary && (
+            <p className="text-sm text-muted-foreground max-w-2xl">
+              {analysisData.executive_summary}
+            </p>
+          )}
+          
           <div className="flex flex-wrap justify-center gap-4 mt-3">
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
-              <Download className="h-4 w-4" /> Download Report
-            </Button>
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
-              <Share2 className="h-4 w-4" /> Share Results
-            </Button>
             <Button 
               variant="outline" 
               size="sm" 
@@ -149,6 +135,15 @@ const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ score, onReset }) =
             </Tabs>
           </div>
         </div>
+
+        {/* Add metadata section if available */}
+        {analysisData?.metadata && (
+          <div className="mt-8 p-4 bg-muted rounded-lg text-sm text-muted-foreground">
+            <p>
+               Completed in {(analysisData.metadata.analysis_time / 1000).toFixed(1)}s
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

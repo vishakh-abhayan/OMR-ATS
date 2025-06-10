@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import FileUploader from './FileUploader';
 import { Button } from '@/components/ui/button';
@@ -19,10 +18,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onAnalyzeStart }) => {
 
   const handleAnalyzeClick = () => {
     if (!resumeFile) {
-      toast({
-        title: "Resume Required",
-        description: "Please upload your resume to continue.",
-      });
+      toast.error("Please upload your resume to continue.");
       return;
     }
 
@@ -77,7 +73,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onAnalyzeStart }) => {
         <div className="pt-4">
           <Button 
             onClick={handleAnalyzeClick}
-            className="w-full bg-resume-primary hover:bg-resume-secondary text-white"
+            className="w-full bg-black hover:bg-black text-white"
             disabled={!resumeFile}
             size="lg"
           >
