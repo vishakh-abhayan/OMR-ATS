@@ -32,8 +32,8 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onAnalyzeStart }) => {
       <div className="space-y-8">
         <div>
           <h2 className="text-2xl font-semibold mb-2">Upload Your Documents</h2>
-          <p className="text-muted-foreground">
-            Let our AI analyze your resume and provide personalized feedback to help you land your dream job.
+          <p className="text-muted-foreground ">
+          Let our AI analyze your CV<span className='hidden md:inline'> and provide personalized feedback to help you land your dream job.</span>
           </p>
         </div>
         

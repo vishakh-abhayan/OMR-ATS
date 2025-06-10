@@ -105,7 +105,7 @@ const Index = () => {
       <footer className="border-t py-6">
         <div className="container">
           <p className="text-center text-sm text-muted-foreground">
-            © 2025 Resume ATS Analyzer. All rights reserved.
+            © 2025 Ohmyresume Inc. All rights reserved.
           </p>
         </div>
       </footer>
