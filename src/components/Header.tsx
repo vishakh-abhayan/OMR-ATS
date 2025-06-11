@@ -32,8 +32,8 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <a href="/" className="flex items-center space-x-2">
-              <img src={Logo} height={40} width={40} alt="ohmyresume logo" className="rounded-lg" />
-              <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              {/* <img src={Logo} height={40} width={40} alt="ohmyresume logo" className="rounded-lg" /> */}
+              <h1 className="text-2xl md:text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 OhMyResume
               </h1>
             </a>

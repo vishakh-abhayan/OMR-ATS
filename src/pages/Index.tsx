@@ -78,8 +78,8 @@ const Index = () => {
       <Header />
       
       <main className="flex-1 flex flex-col">
-        <div className="container py-8 flex-1 flex flex-col">
-          <div className="my-auto py-8">
+        <div className="container py-2 flex-1 flex flex-col">
+          <div className="my-auto py-2">
             {appState === 'upload' && (
               <UploadSection onAnalyzeStart={handleAnalyzeStart} />
             )}

@@ -29,12 +29,10 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onAnalyzeStart }) => {
 
   return (
     <div className="max-w-2xl mx-auto w-full">
-      <div className="space-y-8">
+      <div className="space-y-3">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Upload Your Documents</h2>
-          <p className="text-muted-foreground ">
-          Let our AI analyze your CV<span className='hidden md:inline'> and provide personalized feedback to help you land your dream job.</span>
-          </p>
+          <h2 className="text-2xl font-semibold mb-2">Upload Your CV</h2>
+    
         </div>
         
         <FileUploader
@@ -54,7 +52,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onAnalyzeStart }) => {
             <TabsContent value="text" className="space-y-2">
               <Textarea
                 placeholder="Paste the job description here..."
-                className="min-h-[200px]"
+                className="min-h-[150px]"
                 value={jobDescText}
                 onChange={(e) => setJobDescText(e.target.value)}
               />
@@ -73,7 +71,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onAnalyzeStart }) => {
         <div className="pt-4">
           <Button 
             onClick={handleAnalyzeClick}
-            className="w-full bg-black hover:bg-black text-white"
+            className="w-full bg-primary hover:bg-primary text-white"
             disabled={!resumeFile}
             size="lg"
           >
