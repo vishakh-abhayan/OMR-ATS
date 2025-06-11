@@ -26,16 +26,9 @@ const AnalysisProgress: React.FC<AnalysisProgressProps> = ({ status, onComplete 
       
       <div className="space-y-2">
         <h3 className="text-xl font-medium">Analyzing Your Resume</h3>
-        <p className="text-sm text-muted-foreground">
-          {status}{status.includes('...') ? '' : dots}
-        </p>
+        
       </div>
       
-      <div className="w-full">
-        <div className="text-xs text-center text-muted-foreground">
-          This typically takes 15-30 seconds
-        </div>
-      </div>
     </div>
   );
 };

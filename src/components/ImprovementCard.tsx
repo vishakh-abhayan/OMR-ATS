@@ -80,9 +80,11 @@ const ImprovementCard: React.FC<ImprovementCardProps> = ({
               <div className="flex items-center justify-between mb-1">
                 <span className="text-xs font-medium text-resume-primary">Recommendation</span>
                 {status !== 'good' && (
-                  <button className="text-xs text-resume-primary hover:underline">
+                  <a href="https://ohmyresume.com">
+                    <button className="text-xs text-resume-primary hover:underline">
                     Apply Fix
                   </button>
+                  </a>
                 )}
               </div>
               <p className="text-xs italic bg-background/50 p-2 rounded border">
